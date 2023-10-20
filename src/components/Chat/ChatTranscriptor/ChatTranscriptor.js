@@ -6,7 +6,7 @@ import React, { PureComponent } from "react";
 import PT from "prop-types";
 import styled from "styled-components";
 import { modelUtils } from "../datamodel/Utils";
-import { Direction, PARTICIPANT_MESSAGE, ATTACHMENT_MESSAGE } from "../datamodel/Model";
+import { Direction, PARTICIPANT_MESSAGE, ATTACHMENT_MESSAGE, ContentType } from "../datamodel/Model";
 import renderHTML from 'react-render-html';
 import {
   MessageBox,
@@ -92,7 +92,8 @@ export default class ChatTranscriptor extends PureComponent {
       });
     }
 
-    let textAlign = "left";
+    let textAlign = itemDetails.transportDetails.direction === Direction.Incoming ? "left" : "right";
+    let shouldDisplay = true
 
     if (itemDetails.type === PARTICIPANT_MESSAGE) {
       config = Object.assign({}, config, transcriptConfig.participantMessageConfig);
@@ -117,6 +118,10 @@ export default class ChatTranscriptor extends PureComponent {
     } else if (modelUtils.isRecognizedEvent(itemDetails.content.type)) {
       config = Object.assign({}, config, transcriptConfig.systemMessageConfig);
       textAlign = "center";
+      
+      shouldDisplay = 
+        !itemDetails.content.type == ContentType.EVENT_CONTENT_TYPE.PARTICIPANT_JOINED
+
     } else {
       return <React.Fragment />;
     }
@@ -129,9 +134,10 @@ export default class ChatTranscriptor extends PureComponent {
     }
 
     return (
-      <MessageBox key={key} textAlign={textAlign}>
-        {config.isHTML ? renderHTML(content) : content}
-      </MessageBox>
+        shouldDisplay &&
+        <MessageBox key={key} textAlign={textAlign}>
+          {config.isHTML ? renderHTML(content) : content}
+        </MessageBox>
     );
   };
 

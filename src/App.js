@@ -12,8 +12,22 @@ import defaultTheme from './theme/defaultTheme';
 
 const Page = styled.div`
 
-  width: 300px;
-  font-family: ${props => props.theme.fonts.regular};
+  width: ${props => props.chatWidth ? props.chatWidth : "25vw"};
+  height: ${props => props.chatHeight ? props.chatHeight : "75vh"};
+  /*font-family: ${props => props.theme.fonts.regular};*/
+
+  @font-face {
+    font-family: "Foco W01 Regular";
+    src: url("https://db.onlinewebfonts.com/t/f7ebd328a44ccedc268ddb6178e3d7eb.eot");
+    src: url("https://db.onlinewebfonts.com/t/f7ebd328a44ccedc268ddb6178e3d7eb.eot?#iefix")format("embedded-opentype"),
+    url("https://db.onlinewebfonts.com/t/f7ebd328a44ccedc268ddb6178e3d7eb.woff2")format("woff2"),
+    url("https://db.onlinewebfonts.com/t/f7ebd328a44ccedc268ddb6178e3d7eb.woff")format("woff"),
+    url("https://db.onlinewebfonts.com/t/f7ebd328a44ccedc268ddb6178e3d7eb.ttf")format("truetype"),
+    url("https://db.onlinewebfonts.com/t/f7ebd328a44ccedc268ddb6178e3d7eb.svg#Foco W01 Regular")format("svg");
+  }
+
+  font-family: "Foco W01 Regular";
+  font-size: 14px;
 
   margin: ${props => props.theme.spacing.base};
   border-collapse: collapse;
@@ -24,6 +38,9 @@ const Page = styled.div`
   *, *:before, *:after {
     box-sizing: inherit;
   }
+
+  overflow: hidden;
+  border-radius: 5px;
 `;
 
 
@@ -42,7 +59,7 @@ App.defaultProps = {
 function App({ baseCssClass, ...props }) {
   return (
     <AppProvider themeConfig={props.themeConfig || {}}>
-      <Page className={baseCssClass}>
+      <Page className={baseCssClass} chatWidth={props.chatWidth} chatHeight={props.chatHeight}>
         <ChatContainer {...props}/>
       </Page>
     </AppProvider>

@@ -17,9 +17,9 @@ export class SystemMessage extends React.PureComponent {
     console.log(this.props);
     let name  = "";
     switch (this.props.messageDetails.content.type) {
-      case ContentType.EVENT_CONTENT_TYPE.PARTICIPANT_JOINED:
+      /*case ContentType.EVENT_CONTENT_TYPE.PARTICIPANT_JOINED:
         name = this.props.messageDetails.displayName;
-        return name + " has joined the chat";
+        return name + " has joined the chat";*/
       case ContentType.EVENT_CONTENT_TYPE.PARTICIPANT_LEFT:
         name = this.props.messageDetails.displayName;
         return name + " has left the chat";

@@ -53,4 +53,4 @@ if (
 }
 
 
-jest.run(argv);
+//jest.run(argv);

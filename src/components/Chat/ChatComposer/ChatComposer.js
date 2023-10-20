@@ -21,7 +21,7 @@ const DefaultChatComposerWrapper = styled.div`
   position: relative;
   display: flex;
   background: ${(props) => props.theme.palette.white};
-  border: 0.5px solid ${(props) => props.theme.palette.lightGray};
+  /*border: 0.5px solid ${(props) => props.theme.palette.lightGray};*/
   border-left: 0;
   border-right: 0;
 `;
@@ -164,7 +164,7 @@ ChatComposer.defaultProps = {
   onTypingValidityTime: 10 * 1000,
 };
 
-export default function ChatComposer({ addMessage, addAttachment, onTyping, contactId, contactStatus, onTypingValidityTime, textInputRef, composerConfig }) {
+export default function ChatComposer({ addMessage, addAttachment, onTyping, contactId, contactStatus, onTypingValidityTime, textInputRef, composerConfig, customPlaceHolder }) {
   let logger;
   let mobileJitter;
   if (window.connect && window.connect.LogManager) {
@@ -307,7 +307,7 @@ export default function ChatComposer({ addMessage, addAttachment, onTyping, cont
     addAttachment(contactId, file);
   }
 
-  const ariaLabel = "Type a message";
+  const ariaLabel = customPlaceHolder != null ? customPlaceHolder : "Escriba su mensaje";
   const placeholder = attachment == null ? ariaLabel : "";
 
   const richMessagingComposer = (

@@ -22,6 +22,7 @@ import { shouldDisplayMessageForType } from "../../../../utils/helper";
 import { modelUtils } from "../../datamodel/Utils";
 import { RichMessageRenderer } from "../../RichMessageComponents";
 import { formatCarouselInteractiveSelection, isCarouselSelectionMessage } from "./InteractiveMessages/Carousel";
+import parse from 'html-react-parser';
 
 export const MessageBox = styled.div`
   padding: ${({ theme }) => theme.globals.basePadding} ${({ theme }) => theme.spacing.base};
@@ -53,16 +54,23 @@ Footer.MessageReceipt = styled.div`
 `;
 
 const Body = styled.div`
-  ${(props) =>
+  /*${(props) =>
     props.direction === Direction.Outgoing
       ? props.theme.chatTranscriptor.outgoingMsg
       : props.theme.chatTranscriptor.incomingMsg};
 
   ${(props) => (props.messageStyle ? props.messageStyle : "")};
 
-  ${(props) => props.childWillAddBackground ? "background: none" : ""}
+  ${(props) => props.childWillAddBackground ? "background: none" : ""}*/
 
-  padding: ${(props) => (props.removePadding ? 0 : props.theme.spacing.base)};
+  color: #222222;
+
+  background: ${(props) => props.direction === Direction.Incoming ? "#F2F2F2" : "#DCF3FF"}
+
+  font-size: 12px;
+
+  /*padding: ${(props) => (props.removePadding ? 0 : props.theme.spacing.base)};*/
+  padding: ${(props) => (props.removePadding ? 0 : "12px")};
   margin-top: ${(props) => props.theme.spacing.mini};
   border-radius: 5px;
   position: relative;
@@ -280,14 +288,13 @@ export class ParticipantMessage extends PureComponent {
         : this.props.incomingMsgStyle;
 
     //Hack to simulate ChatJS response with attachment content types
-    const bodyStyleConfig = {};
+    const bodyStyleConfig = {hideDirectionArrow: true};
     if (
       this.props.isLatestMessage &&
       this.props.messageDetails.content &&
       this.props.messageDetails.content.type ===
         ContentType.MESSAGE_CONTENT_TYPE.INTERACTIVE_MESSAGE
     ) {
-      bodyStyleConfig.hideDirectionArrow = true;
       bodyStyleConfig.removePadding = true;
 
       const { templateType } = JSON.parse(this.props.messageDetails.content.data);
@@ -326,7 +333,7 @@ export class ParticipantMessage extends PureComponent {
 
     return (
       <div data-testid="main-message">
-        <Header data-testid="message-header">{this.renderHeader()}</Header>
+        {/*<Header data-testid="message-header">{this.renderHeader()}</Header>*/}
         <InView onChange={(inView) => this.setState({ inView })}>
           {({ ref }) => (
             <Body
@@ -382,17 +389,21 @@ export class ParticipantMessage extends PureComponent {
       this.triggerCountMetric(CSM_CONSTANTS.RENDER_RICH_MESSAGE)
       return <RichMessageRenderer content={data.content.title} />
     }
-    if (contentType === ContentType.MESSAGE_CONTENT_TYPE.TEXT_MARKDOWN) {
-      this.triggerCountMetric(CSM_CONSTANTS.RENDER_RICH_MESSAGE)
-      return <RichMessageRenderer content={content} />
-    }
+    
     this.triggerCountMetric(CSM_CONSTANTS.RENDER_PLAIN_MESSAGE)
     if (isCarouselSelectionMessage(content)) {
       const carouselAndNestedPickerTitle = formatCarouselInteractiveSelection(content);
       return <PlainTextMessage content={carouselAndNestedPickerTitle} />
     }
 
-    return <PlainTextMessage content={content} />
+    if (contentType === ContentType.MESSAGE_CONTENT_TYPE.TEXT_MARKDOWN) {
+      this.triggerCountMetric(CSM_CONSTANTS.RENDER_RICH_MESSAGE)
+      return <RichMessageRenderer content={content} />
+    }
+
+
+    return <RichMessageRenderer content={content} />
+    //return <PlainTextMessage content={content} />
   }
 
   renderTransportError(error) {
@@ -428,8 +439,9 @@ export class ParticipantMessage extends PureComponent {
 
 class PlainTextMessage extends PureComponent {
   render() {
+    //Se toma el contenido como un html, denotando la propiedad dangerouslySetInnerHTML para ello 
     return (
-      <Linkify properties={{ target: "_blank" }}>{this.props.content}</Linkify>
+      <Linkify dangerouslySetInnerHTML={{__html: this.props.content}} properties={{ target: "_blank", }}>{parse(this.props.content)}</Linkify>
     );
   }
 }

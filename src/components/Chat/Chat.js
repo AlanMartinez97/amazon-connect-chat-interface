@@ -11,6 +11,7 @@ import {Text} from "connect-core";
 import styled from "styled-components";
 
 import renderHTML from 'react-render-html';
+import { Fragment } from "react";
 
 const ChatWrapper = styled.div`
   position: relative;
@@ -44,7 +45,7 @@ const ChatComposerWrapper = styled.div`
   padding: 0;
   display: flex;
   flex-direction: column;
-  height: 340px;
+  height: 100%;
   @media (max-width:640px) {
     position: absolute;
     left: 0;
@@ -56,25 +57,80 @@ const ChatComposerWrapper = styled.div`
 `;
 
 const HeaderWrapper = styled.div`
-  background: #3F5773;
+  /*background: #3F5773;*/
+  background: ${props => props.headerBackgroundColor != null ? props.headerBackgroundColor : "#3F5773"};
   text-align: center;
+<<<<<<< Updated upstream
   padding: 16px;
+=======
+  padding: 15px;
+>>>>>>> Stashed changes
   color: #fff;
   border-radius: 3px;
   flex-shrink: 0;
+  display:flex;
 `
 const WelcomeText  = styled(Text)`
   padding-bottom: 10px;
 `
 
+const HeaderBotInfo = styled.div`
+  width: 75%;
+  text-align: left;
+  display:flex;
+`
+const HeaderChatControl = styled.div`
+  width: 25%;
+  text-align: right;
+`
+const IconWrapper = styled.div`
+  width:30%;
+`
+
+const BotTextInfo = styled.div`
+  width:70%;
+  margin-left: 5px;
+`
+
+const BotName = styled.div`
+  font-weight: bold;
+  margin-bottom: 3px;
+`
+
+const BotStatus = styled.div`
+  font-size: 12px;
+`
 
 const defaultHeaderConfig =  {
   isHTML: false,
-  render: () => {
-    return (
-      <HeaderWrapper>
+  iconSrc: null,
+  headerBackgroundColor: null,
+  botName: null,
+  botStatus: null,
+  onClose: null,
+  render: function() {
+    let mainContent = this.iconSrc == null ?
+      <Fragment>
         <WelcomeText type={'h2'}>Hi there! </WelcomeText>
         <Text type={'p'}>This is an example of how customers experience chat on your website</Text>
+      </Fragment> :
+      <Fragment>
+        <HeaderBotInfo>
+          <IconWrapper>
+            <img src={this.iconSrc} alt="Header icon" width="100%" height="100%"/>
+          </IconWrapper>
+          <BotTextInfo>
+            <BotName>{this.botName == null ? "AMCHI" : this.botName}</BotName>
+            <BotStatus>{this.botStatus == null ? "En linea" : this.botStatus}</BotStatus>
+          </BotTextInfo>
+        </HeaderBotInfo>
+        <HeaderChatControl onClick={this.onClose}>
+          <svg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 512 512"><path d="M233.4 406.6c12.5 12.5 32.8 12.5 45.3 0l192-192c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L256 338.7 86.6 169.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3l192 192z"/></svg>
+        </HeaderChatControl>
+      </Fragment>
+    return (
+      <HeaderWrapper headerBackgroundColor={this.headerBackgroundColor}>
+        {mainContent}
       </HeaderWrapper>
     )
   }
@@ -84,9 +140,15 @@ Header.defaultProps = {
   headerConfig: {}
 }
 
-function Header({ headerConfig }){
+function Header({ headerConfig, iconSrc, headerBackgroundColor, 
+  botName, botStatus, onClose}){
 
   const config = Object.assign({}, defaultHeaderConfig, headerConfig);
+  config.iconSrc = iconSrc
+  config.headerBackgroundColor = headerBackgroundColor
+  config.botName = botName
+  config.botStatus = botStatus
+  config.onClose = onClose
 
   if(config.isHTML){
     return renderHTML(config.render());
@@ -180,14 +242,33 @@ export default class Chat extends Component {
   -- this prevents overlay from overflowing in mobile browser. 
 */
   render() {
-    const {chatSession, headerConfig, transcriptConfig, composerConfig, footerConfig } = this.props;
+    const {chatSession, headerConfig, transcriptConfig, 
+      composerConfig, footerConfig, iconSrc, closerElementId,
+      headerBackgroundColor, customPlaceHolder, botName,
+      botStatus} = this.props;
     console.log('MESSAGES', this.state.transcript);
+
+    let showActionBar = false
+    if(closerElementId != null){
+      let closerElement = document.getElementById(closerElementId)
+
+      if(closerElement != null){
+        closerElement.addEventListener("click", () => this.endChat())
+        showActionBar = false
+      }
+      else
+        console.log("Closer element doesnt exist in dom.")
+    }
 
     return (
       <ChatWrapper data-testid="amazon-connect-chat-wrapper">
         {(this.state.contactStatus === CONTACT_STATUS.CONNECTED ||
           this.state.contactStatus === CONTACT_STATUS.CONNECTING || this.state.contactStatus === CONTACT_STATUS.ENDED) && 
-          <ParentHeaderWrapper ref={this.parentHeaderRef}><Header headerConfig={headerConfig}/></ParentHeaderWrapper>
+          <ParentHeaderWrapper ref={this.parentHeaderRef}>
+            <Header headerConfig={headerConfig} iconSrc={iconSrc} 
+                    headerBackgroundColor={headerBackgroundColor} botName={botName}
+                    botStatus={botStatus} onClose={() => this.endChat()}/>
+          </ParentHeaderWrapper>
         }
         <ChatComposerWrapper  parentHeaderWrapperHeight={this.state.parentHeaderWrapperHeight}>
           <ChatTranscriptor
@@ -210,9 +291,11 @@ export default class Chat extends Component {
             onTyping={() => chatSession.sendTypingEvent()}
             composerConfig={composerConfig}
             textInputRef={textInputRef}
+            customPlaceHolder={customPlaceHolder}
           />
         </ChatComposerWrapper>
-        {<ChatActionBar
+        { showActionBar &&
+          <ChatActionBar
           onEndChat={() => this.endChat()}
           onClose ={() => this.closeChat()}
           contactStatus={this.state.contactStatus}

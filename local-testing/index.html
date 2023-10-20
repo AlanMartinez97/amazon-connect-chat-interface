@@ -5,7 +5,7 @@
     <title></title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-
+    <!--<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta2/css/all.min.css"/> -->
     <script src="amazon-connect-chat-interface.js"></script>
     <script src="backendEndpoints.js"></script>
 </head>
@@ -42,58 +42,11 @@
                 </fieldset>
             </form>
         </section>
-        <section class="section-chat" id="section-chat" style="float: right; width: 50%; transition: opacity 1s; opacity: 0;">
-            <div id="root"></div>
-        </section>
+        <!--<section class="section-chat" id="section-chat" style="float: right; width: 50%; transition: opacity 1s; opacity: 0;">
+             <div id="root" class="fab-container"></div> 
+        </section>-->
+        <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
     </div>
-    <script>
-        (function () {
-            connect.ChatInterface.init({
-                containerId: 'root' // This is the id of the container where you want the widget to reside
-            });
-
-            document.getElementById('contactDetails').addEventListener('submit', function (e) {
-                e.preventDefault();
-
-                customerName = document.getElementById('firstName').value;
-                if (!customerName) {
-                    alert('you must enter a name & username');
-                    document.getElementById("contactDetails").reset();
-                } else {
-                    console.log("this is the first name:" + customerName);
-                    document.getElementById("contactDetails").reset();
-
-                    connect.ChatInterface.initiateChat({
-                        name: customerName,
-                        region,
-                        apiGatewayEndpoint,
-                        contactAttributes: JSON.stringify({
-                            "customerName": customerName
-                        }),
-                        featurePermissions: {
-                            "ATTACHMENTS": false,  // this is the override flag from user for attachments
-                        },
-                        supportedMessagingContentTypes: "text/plain,text/markdown", // enable rich messaging
-                        contactFlowId,
-                        instanceId
-                    },successHandler, failureHandler);
-                }
-            });
-        })();
-
-        function successHandler(chatSession) {
-            console.log("success!");
-            document.getElementById('section-chat').style.opacity = 1;
-
-            chatSession.onChatDisconnected(function(data) {
-                document.getElementById('section-chat').style.opacity = 0;
-            });
-        }
-
-        function failureHandler(error) {
-            console.log("There was an error: ");
-            console.log(error);
-        }
-    </script>
+    <script src="custom-chat.js"></script>
 
 </body>

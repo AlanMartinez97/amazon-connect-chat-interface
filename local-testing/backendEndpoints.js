@@ -12,7 +12,7 @@
  *  - ContactFlowId: https://docs.aws.amazon.com/connect/latest/adminguide/find-contact-flow-id.html
  */
 
-var contactFlowId = "12345678-1234-1234-1234-123456789012"; // TODO: Fill in
-var instanceId = "12345678-1234-1234-1234-123456789012"; // TODO: Fill in
-var apiGatewayEndpoint = "https://<api-id>.execute-api.<region>.amazonaws.com/<stage>/"; // TODO: Fill in with the API Gateway endpoint created by your CloudFormation template
-var region = "<region>"; // TODO: Fill in
+/*var contactFlowId = "5fbedcfe-9075-4681-87a4-8dc68131e2f4"; // TODO: Fill in
+var instanceId = "820befb7-ea0f-4a41-b25c-27cd69311613"; // TODO: Fill in
+var apiGatewayEndpoint = "https://7ikhq85r0f.execute-api.us-east-1.amazonaws.com/Prod/"; // TODO: Fill in with the API Gateway endpoint created by your CloudFormation template
+var region = "us-east-1"; // TODO: Fill in*/
